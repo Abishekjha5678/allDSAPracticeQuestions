@@ -1,4 +1,5 @@
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -117,5 +118,29 @@ public class Solution {
         combination(candidates, 0, target, result, new ArrayList<>());
         return result;
 
+    }
+
+    /*Time Complexity	O(C(n, k) × k)
+    Space Complexity	O(k) (excluding output)
+    Output Space Complexity	O(C(n, k) × k) */
+    // Leetcode : 77 Combination
+    /*Approach : 
+     * Step-1 : generate all the combination from 1 to n 
+     */
+    void backtrack(int n, int index,int target, List<List<Integer>> result, List<Integer> temp){
+        if(temp.size()==target){
+            result.add(new ArrayList<>(temp));
+            return;
+        }
+        for(int i=index;i<=n;i++){
+            temp.add(i);
+            backtrack(n,i+1, target, result,temp);
+            temp.remove(temp.size()-1);
+        }
+    }
+    public List<List<Integer>> combine(int n, int k) {
+        List<List<Integer>> result = new ArrayList<>();
+        backtrack(n,1,k,result,new ArrayList<>());
+        return result;
     }
 }
