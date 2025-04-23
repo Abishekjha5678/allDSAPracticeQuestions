@@ -1,5 +1,7 @@
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class Solution {
     /* Problem 
@@ -42,5 +44,78 @@ public class Solution {
             }
         }
         return count;
+    }
+
+    /* problem : 
+     * Given an array nums and an integer k.Return the number of non-empty subsequences
+     *  of nums such that the sum of all elements in the subsequence is equal to k.
+     * 
+     * Input : nums = [4, 9, 2, 5, 1] , k = 10
+
+        Output : 2
+
+        Explanation : The possible subsets with sum k are [9, 1] , [4, 5, 1].
+
+        Input : nums = [4, 2, 10, 5, 1, 3] , k = 5
+
+        Output : 3
+
+        Explanation : The possible subsets with sum k are [4, 1] , [2, 3] , [5].
+     */
+    /*
+     Approaches : 
+        Step 1: generate all the subsequences and keep adding and check if the subsequence sum is k then increase the counter;
+
+    */
+    
+    int backtrack(int[] arr, int index, int sum, int target) {
+        if (index == arr.length) {
+            return (sum == target) ? 1 : 0;
+        }
+
+        // Include current element
+        int include = backtrack(arr, index + 1, sum + arr[index], target);
+        // Exclude current element
+        int exclude = backtrack(arr, index + 1, sum, target);
+
+        return include + exclude;
+    }
+    public int countSubsequenceWithTargetSumK(int[] arr, int target){
+        return backtrack(arr, 0, 0, target);
+        // return count.get();
+    }
+    
+    /*problem // 39. Combination Sum  leetcode
+     *  approaches: 
+     * Step 1: everytime we've two options to i.e to pick the same element multiple time
+     * or we'can choose the next element of the array. 
+     * Time complexity of this approaches is O(2^n * target) because we can choose sinlge element multiple times
+    */
+    void combination(int []arr, int index, int target, List<List<Integer>> result, List<Integer> temp){
+        if(index == arr.length){
+            if(target == 0)result.add(new ArrayList<>(temp));
+            return;
+        }
+        if (0 <=target ) {
+            temp.add(arr[index]);
+            combination(arr, index, target - arr[index], result, temp);
+            temp.remove(temp.size() - 1);
+        }
+        combination(arr, index+1, target, result, temp);
+        
+        
+    }
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        List<List<Integer>> result= new ArrayList<>();
+        // var map=new HashMap<Integer, Integer>();
+
+        // map.put(1,2);
+        // for(var mp: map.entrySet()){
+        //     System.out.println(mp);
+        // }
+        
+        combination(candidates, 0, target, result, new ArrayList<>());
+        return result;
+
     }
 }
