@@ -2,7 +2,9 @@
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Solution {
     /* Problem 
@@ -142,5 +144,76 @@ public class Solution {
         List<List<Integer>> result = new ArrayList<>();
         backtrack(n,1,k,result,new ArrayList<>());
         return result;
+    }
+
+
+    /* Leetcode Problem : 17 letter combination of a phone number
+     * approach is same as the above
+     * 
+     */
+    
+    
+
+    // Solution
+    void backtrack(String digits, int index,Map<Character, String> mp,List<String> res,StringBuilder comb) {
+        if (digits.length() == index) {
+            res.add(comb.toString());
+            return;
+        }
+        String str= mp.get(digits.charAt(index));
+        for (char letter : str.toCharArray()) {
+            comb.append(letter);
+            backtrack(digits,index+1, mp, res, comb);
+            comb.deleteCharAt(comb.length() - 1);
+        }
+        System.out.println();
+        for(String s: res)System.out.print(s+" ");
+    }
+    // dry run input digits = "23" n= 2 total number of call = 3^size(letter) = 27
+
+    /*Time Complexity:
+    If there are n digits and each digit maps to m letters (worst case m=4, like for '7'/'9'), then:
+
+    T(n) = O(mⁿ) combinations generated
+
+    Each combination takes O(n) to build/copy
+
+    Final Time Complexity = O(mⁿ * n)
+
+    Space Complexity:
+
+    Stack depth is n (due to recursion)
+
+    Result space = O(mⁿ * n)
+
+    Using StringBuilder avoids new string creation in each call → efficient*/
+    /* first call : [ index =0 ,comb = "a"]
+    second call: [index =1, comb="ad"]
+    third call : [ index=2, comb="ad"] res=["ab"] return; and comb.deleteCharAt(d);
+    forth call : [ index= 2, comb="ae"] res=["ae"] return; and comb.deleteCharAt(e);
+    fifth call : [ index= 2, comb="ae"] res=["af"] return; and comb.deleteCharAt(f);
+    loop end for 2 now back to a again and removed a;
+    sixth call : [ index= 1, comb="b"] res=["b"]
+    7th call : [ index= 2, comb="bd"] res=["bd"] return; and comb.deleteCharAt(d);
+    8th call : [ index= 2, comb="be"] res=["be"] return; and comb.deleteCharAt(e);
+    so on
+    */
+    public List<String> letterCombinations(String digits) {
+        List<String> res = new ArrayList<>();
+        if (digits == null || digits.length() == 0) {
+            return res;
+        }
+        Map<Character, String> digitToLetters = new HashMap<>();
+        digitToLetters.put('2', "abc");
+        digitToLetters.put('3', "def");
+        digitToLetters.put('4', "ghi");
+        digitToLetters.put('5', "jkl");
+        digitToLetters.put('6', "mno");
+        digitToLetters.put('7', "pqrs");
+        digitToLetters.put('8', "tuv");
+        digitToLetters.put('9', "wxyz");
+        
+        backtrack(digits,0, digitToLetters, res, new StringBuilder());
+        return res;
     }
 }
