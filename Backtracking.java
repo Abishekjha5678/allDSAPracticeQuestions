@@ -372,7 +372,104 @@ Space Complexity: O(m*n)  --> For memoization table + recursion stack.
 
         return dfs(arr, 0, 0);
     }
-
     
+        // 4 directions: right, left, up, down
+        int[][] backtrack = {
+            {0,1},{0,-1},{-1,0},{1,0}
+        };
+        
+        // DFS approach with backtracking
+        int dfs(int[][] grid, int i, int j, int count, int visited) {
+            // Base conditions: boundary check or hitting obstacle
+            if(i<0 || j<0 || i>=grid.length || j>=grid[0].length || grid[i][j]==-1) return 0;
+            
+            // If we reach destination (2)
+            if(grid[i][j]==2) {
+                // Check if all non-obstacle squares have been visited
+                return visited == count ? 1 : 0;
+            }
+            
+            // Mark current cell as visited
+            int temp = grid[i][j];
+            grid[i][j] = -1;
+            
+            int ways = 0;
+            
+            // Explore all 4 directions
+            for(int k=0; k<4; k++) {
+                int index_i = i + backtrack[k][0];
+                int index_j = j + backtrack[k][1];
+                ways += dfs(grid, index_i, index_j, count, visited+1);
+            }
+            
+            // Backtrack: unmark the cell
+            grid[i][j] = temp;
+            
+            return ways;
+        }
+        
+        public int uniquePathsIII(int[][] grid) {
+            int count = 0, start_i = 0, start_j = 0;
+            
+            // First Pass: Find the starting cell and count total non-obstacle squares
+            for(int i=0; i<grid.length; i++) {
+                for(int j=0; j<grid[0].length; j++) {
+                    if(grid[i][j] != -1) count++; // non-obstacles and target and start
+                    if(grid[i][j] == 1) {
+                        start_i = i;
+                        start_j = j;
+                    }
+                }
+            }
+            
+            // Start DFS from the starting cell
+            return dfs(grid, start_i, start_j, count, 1); // already visited starting point
+        }
+    
+    /* 
+    ----------------------------------------------------------------
+    🔵 FIRST APPROACH (Explained):
+    
+    **Idea:**
+    - We need to start from '1', walk through all non-obstacle squares exactly once, and reach '2'.
+    - Use **DFS + Backtracking**:
+      - Start from the starting cell.
+      - For each cell:
+        - Mark it visited (by setting `grid[i][j] = -1` temporarily).
+        - Try all 4 directions recursively.
+        - After recursion, **backtrack** by resetting the cell.
+      - When you reach '2', check if all non-obstacles are visited.
+      
+    **Key points:**
+    - `count` = total number of non-obstacle squares (including start and end).
+    - `visited` = how many squares we have visited so far in this path.
+    - Only return 1 if `visited == count` when reaching destination.
+    
+    **Time Complexity:**
+    - Exponential: O(3^(m*n)) because at each step, up to 3 choices (can't go back where we came from immediately).
+    
+    **Space Complexity:**
+    - O(m*n) due to recursion depth and visited cells.
+    
+    ----------------------------------------------------------------
+    🔴 SECOND APPROACH (Alternative Trie-Like optimization):
+    
+    (Note: Not implemented here, but useful in other problems.)
+    
+    - We can encode the visited path as a **bitmask** instead of marking the board.
+    - Each cell is mapped to a bit (if grid is small), allowing faster state storage.
+    - Memoization (DP with (i,j,bitmask)) can be applied.
+    
+    This reduces time complexity if the grid is small enough (~20 cells).
+    
+    Time: O((m*n) * 2^(m*n))  
+    Space: O((m*n) * 2^(m*n))
+    
+    (Used for super-tight optimizations, not needed here.)
+    
+    ----------------------------------------------------------------
+    */
+    
+
     
 }
