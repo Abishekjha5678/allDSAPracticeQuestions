@@ -471,5 +471,37 @@ Space Complexity: O(m*n)  --> For memoization table + recursion stack.
     */
     
 
-    
+    // Problem: Find the number of unique paths from (0, 0) to (m-1, n-1) moving only right or down.
+// Time and space is O(M*N) and O(M * N)
+
+    // int [][]dp; // Memoization table
+
+    // Helper function to perform DFS + Memoization
+    int dfs(int i, int j, int n, int m) {
+        // Boundary Condition: If out of bounds, no path
+        if (i < 0 || j < 0 || i >= m || j >= n) return 0;
+        
+        // Base Case: Reached destination
+        if (i == m-1 && j == n-1) return 1;
+        
+        // If already computed, return stored result
+        if (dp[i][j] != -1) return dp[i][j];
+        
+        // Move right and down
+        int right = dfs(i, j + 1, n, m);
+        int down = dfs(i + 1, j, n, m);
+
+        // Store and return total paths from (i,j)
+        dp[i][j] = right + down;
+        return dp[i][j];
+    }
+
+    public int uniquePaths(int m, int n) {
+        dp = new int[m][n]; // Initialize DP array
+        for (int[] row : dp) {
+            Arrays.fill(row, -1); // Mark all cells as unvisited (-1)
+        }
+        return dfs(0, 0, n, m); // Start DFS from (0, 0)
+    }
+
 }
