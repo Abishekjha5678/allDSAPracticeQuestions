@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Backtracking {
@@ -282,6 +283,96 @@ public class Backtracking {
                 return result;
             }
         
+        /*
+First Approach (Brute Force DFS without memoization)
+-----------------------------------------------------
+- Try all possible paths using simple DFS.
+- Only two directions allowed: right (0,1) and down (1,0).
+- Mark the cell as visited temporarily by setting it to 9 to avoid revisiting.
+- Base case:
+    - If we reach the bottom-right cell, return 1 (found a path).
+    - If out of bounds or hit an obstacle (1) or visited (9), return 0.
+- After exploring, backtrack by restoring the original value.
+
+Time Complexity: O(2^(m+n))  --> Very high, leads to TLE (Time Limit Exceeded) for large grids.
+Space Complexity: O(m*n) due to recursion stack.
+
+Code:
+
+    int direction[][]= {{0,1},{1,0}};
+    int dfs(int [][]arr, int i, int j){
+        if(i<0 || j<0 || i>=arr.length || j>=arr[0].length || arr[i][j] == 9 || arr[i][j] == 1) return 0;
+        if(i == arr.length-1 && j == arr[0].length-1) return 1;
         
+        int temp = arr[i][j];
+        arr[i][j] = 9; // Mark visited
+        
+        int possible = 0;
+        for(int k = 0; k < 2; k++){
+            int index_i = i + direction[k][0];
+            int index_j = j + direction[k][1];
+            possible += dfs(arr, index_i, index_j);
+        }
+        
+        arr[i][j] = temp; // Backtrack
+        return possible;
+    }
+
+    public int uniquePathsWithObstacles(int[][] arr) {
+        return dfs(arr, 0, 0);
+    }
+*/
+
+///////////////////////////////////////////////////////////
+
+/*
+Optimized Approach (DFS + Memoization / DP)
+--------------------------------------------
+- Use a memoization table (2D dp array) to store already computed answers.
+- dp[i][j] = number of unique paths from (i,j) to the destination.
+- Avoid recalculating paths from the same cell.
+
+Key Points:
+- If current cell is an obstacle (1), return 0.
+- If we reach destination, return 1.
+- If already computed (dp[i][j] != -1), return saved value.
+
+Time Complexity: O(m*n)  --> Because each cell is visited once at most.
+Space Complexity: O(m*n)  --> For memoization table + recursion stack.
+
+*/
+
+
+    int[][] dp;
+
+    int dfs(int[][] arr, int i, int j) {
+        if (i < 0 || j < 0 || i >= arr.length || j >= arr[0].length || arr[i][j] == 1)
+            return 0;
+        
+        if (i == arr.length - 1 && j == arr[0].length - 1)
+            return 1;
+
+        if (dp[i][j] != -1)
+            return dp[i][j]; // Return memoized result
+
+        int right = dfs(arr, i, j + 1);
+        int down = dfs(arr, i + 1, j);
+
+        dp[i][j] = right + down;
+        return dp[i][j];
+    }
+
+    public int uniquePathsWithObstacles(int[][] arr) {
+        int m = arr.length;
+        int n = arr[0].length;
+        dp = new int[m][n];
+        for (int[] row : dp) {
+            Arrays.fill(row, -1); // Initialize memoization table with -1
+        }
+
+        return dfs(arr, 0, 0);
+    }
+
+    
     
 }
