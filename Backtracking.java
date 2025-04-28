@@ -504,4 +504,112 @@ Space Complexity: O(m*n)  --> For memoization table + recursion stack.
         return dfs(0, 0, n, m); // Start DFS from (0, 0)
     }
 
+    /* APPROACHES 1 without dp TC O(2^n×n^2)
+     * Start with index=0
+        |
+        |-- substring s[0:1] = "a" -> palindrome
+        |    |
+        |    |-- substring s[1:2] = "a" -> palindrome
+        |         |
+        |         |-- substring s[2:3] = "b" -> palindrome
+        |              => Partition ["a", "a", "b"]
+        |
+        |-- substring s[0:2] = "aa" -> palindrome
+        |    |
+        |    |-- substring s[2:3] = "b" -> palindrome
+        |         => Partition ["aa", "b"]
+        |
+        |-- substring s[0:3] = "aab" -> NOT palindrome
+        |    => No further recursion
+
+     */
+    /*
+     boolean isPalindrome(String s){
+        if(s.length()==0)return false;
+        int i=0, j=s.length()-1;
+        while(i<=j){
+            // System.out.println(s.charAt(i)+" "+s.charAt(j));
+            if(s.charAt(i++) != s.charAt(j--))return false;
+        }
+        return true;
+    }
+    void backtrack(String s, int index, List<List<String>> result, List<String> temp){
+        if(index == s.length()){
+            result.add(new ArrayList<>(temp));
+            return;
+        }
+        for(int i=index;i<s.length(); i++){
+            if(isPalindrome(s.substring(index,i+1))){
+                temp.add(s.substring(index,i+1));
+                backtrack(s, i+1, result, temp);
+                temp.remove(temp.size()-1);
+            }
+        }
+    }
+    public List<List<String>> partition(String s) {
+        List<List<String>> result= new ArrayList<>();
+        backtrack(s, 0,result, new ArrayList<>());
+        return result;
+    }
+     */
+     
+    /* with DP Time complexity O(2 n×n) + precompute O(n^2) and space n^2 a
+     * Start with index=0
+        |
+        |-- dp[0][0] == true -> "a" -> valid
+        |    |
+        |    |-- dp[1][1] == true -> "a" -> valid
+        |         |
+        |         |-- dp[2][2] == true -> "b" -> valid
+        |              => Partition ["a", "a", "b"]
+        |
+        |-- dp[0][1] == true -> "aa" -> valid
+        |    |
+        |    |-- dp[2][2] == true -> "b" -> valid
+        |         => Partition ["aa", "b"]
+        |
+        |-- dp[0][2] == false -> "aab" -> skip
+
+     */
+
+     public List<List<String>> partition(String s) {
+        int n = s.length();
+        boolean[][] dp = new boolean[n][n];
+
+        // Initialize the DP table for single characters and pairs
+        for (int i = 0; i < n; i++) {
+            dp[i][i] = true;
+        }
+        for (int length = 2; length <= n; length++) {
+            for (int i = 0; i <= n - length; i++) {
+                int j = i + length - 1;
+                if (s.charAt(i) == s.charAt(j) && (length == 2 || dp[i + 1][j - 1])) {
+                    dp[i][j] = true;
+                }
+            }
+        }
+
+        List<List<String>> result = new ArrayList<>();
+        backtrack(s, 0, new ArrayList<>(), result, dp);
+        return result;
+    }
+
+    private void backtrack(String s, int start, List<String> path, List<List<String>> result, boolean[][] dp) {
+        // If we've reached the end of the string, add the current partition to the result list
+        if (start == s.length()) {
+            result.add(new ArrayList<>(path));
+            return;
+        }
+        // Explore all possible partitions
+        for (int end = start; end < s.length(); end++) {
+            // Use the DP table to check if the substring s[start:end+1] is a palindrome
+            if (dp[start][end]) {
+                path.add(s.substring(start, end + 1));
+                // Recur to find other partitions
+                backtrack(s, end + 1, path, result, dp);
+                // Backtrack to explore other partitions
+                path.remove(path.size() - 1);
+            }
+        }
+    }
 }
