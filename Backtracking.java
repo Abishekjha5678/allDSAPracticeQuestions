@@ -612,4 +612,96 @@ Space Complexity: O(m*n)  --> For memoization table + recursion stack.
             }
         }
     }
+        // dp[i][j] tells whether substring s[i...j] is a palindrome
+        boolean dpb[][];
+        
+        // calculated[i] stores the longest palindrome starting from index i (Memoization)
+        String calculated[];
+    
+        // Recursive function to find the longest palindromic substring starting from index
+        String backtrack(String s, int index) {
+            if (index == s.length()) {
+                return "";
+            }
+            
+            // If already computed, directly return
+            if (calculated[index] != null) {
+                return calculated[index];
+            }
+    
+            String maxString = "";
+    
+            for (int i = index; i < s.length(); i++) {
+                // Check if substring s[index...i] is a palindrome
+                if (dpb[index][i]) {
+                    String currentSubstring = s.substring(index, i + 1);
+                    
+                    // Update maxString if current substring is longer
+                    if (currentSubstring.length() >= maxString.length()) {
+                        maxString = currentSubstring;
+                    }
+                }
+    
+                // Recursively find the longest palindrome starting from next index (i+1)
+                String nextString = backtrack(s, i + 1);
+                
+                // Compare with maxString and pick the longer one
+                if (nextString.length() > maxString.length()) {
+                    maxString = nextString;
+                }
+            }
+    
+            // Memoize the result for index
+            calculated[index] = maxString;
+            return maxString;
+        }
+    
+        public String longestPalindrome(String s) {
+            int n = s.length();
+            dpb = new boolean[n][n];
+            calculated = new String[n];
+    
+            // Precompute palindromic substrings using dynamic programming
+            for (int i = n - 1; i >= 0; i--) {
+                for (int j = i; j < n; j++) {
+                    if (s.charAt(i) == s.charAt(j)) {
+                        if (j - i <= 2) {
+                            dpb[i][j] = true;
+                        } else {
+                            dpb[i][j] = dpb[i + 1][j - 1];
+                        }
+                    }
+                }
+            }
+    
+            return backtrack(s, 0);
+        }
+    /*
+     * s = "babad"
+
+        First, the dp[][] table:
+
+        i/j	0(b)1(a)2(b)3(a)4(d)
+        0	T	F	T	F	F
+        1		T	F	T	F
+        2			T	F	F
+        3				T	F
+        4					T
+        (T = true = palindrome)
+
+        Recursion Tree (Only important branches):
+
+        backtrack(0) → "bab" (dp[0][2]=true)
+            backtrack(3) → "a" (dp[3][3]=true)
+                backtrack(4) → "d" (dp[4][4]=true)
+                    backtrack(5) → ""
+        Max substring: "bab"
+
+        Another path:
+        backtrack(0) → "b" (dp[0][0]=true)
+            backtrack(1) → "aba" (dp[1][3]=true)
+                backtrack(4) → "d" (dp[4][4]=true)
+                    backtrack(5) → ""
+        Max substring: "aba"
+     */
 }
