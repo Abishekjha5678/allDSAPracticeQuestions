@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class nQueens {
@@ -109,5 +110,60 @@ public class nQueens {
 
         solveNQueens(n, output, nQueens, 0);
         return output;
+    }
+
+    // GFG Rat in a Maze Problem - I
+
+    // Directions: Right, Down, Up, Left
+    int[][] direction = {{0, 1}, {1, 0}, {-1, 0}, {0, -1}};
+    char[] ch = {'R', 'D', 'U', 'L'};
+
+    /**
+     * Backtracking helper to explore all valid paths in the maze
+     *
+     * @param maze   the maze grid with 1 as valid and 0 as blocked cell
+     * @param i      current row index
+     * @param j      current column index
+     * @param result list to store all successful paths
+     * @param sb     current path being constructed using directions
+     */
+    void backtrack(int[][] maze, int i, int j, ArrayList<String> result, StringBuilder sb) {
+        // Check for invalid position or already visited (0) cell
+        if (i < 0 || i >= maze.length || j < 0 || j >= maze[0].length || maze[i][j] == 0) return;
+
+        // Reached destination cell (bottom-right corner)
+        if (i == maze.length - 1 && j == maze[0].length - 1) {
+            result.add(sb.toString());
+            return;
+        }
+
+        // Mark current cell as visited
+        int temp = maze[i][j];
+        maze[i][j] = 0;
+
+        // Try all 4 directions (R, D, U, L)
+        for (int d = 0; d < 4; d++) {
+            int newI = i + direction[d][0];
+            int newJ = j + direction[d][1];
+            sb.append(ch[d]); // choose
+            backtrack(maze, newI, newJ, result, sb); // explore
+            sb.deleteCharAt(sb.length() - 1); // un-choose
+        }
+
+        // Restore the cell for other paths
+        maze[i][j] = temp;
+    }
+
+    /**
+     * Main function to solve Rat in a Maze problem
+     *
+     * @param maze 2D grid representing maze
+     * @return sorted list of all possible paths from top-left to bottom-right
+     */
+    public ArrayList<String> ratInMaze(int[][] maze) {
+        ArrayList<String> result = new ArrayList<>();
+        backtrack(maze, 0, 0, result, new StringBuilder());
+        Collections.sort(result); // sort lexicographically if required
+        return result;
     }
 }
