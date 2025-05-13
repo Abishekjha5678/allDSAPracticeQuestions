@@ -1,0 +1,18 @@
+
+* Right Most Bit : num & 1 
+    eg: num=3 -> 0011 & 0001 = 0001 = right most bit is 1
+        num= 10-> 1010 & 0001 = 0000 = Right Most Bit Is 0
+        num = 19-> 10011 & 00001 = 00001 = Right Most Bit is 1
+        Conclusion:  for all odd number right most bit will be 1 and 
+        for all the even number it will be 0;
+
+* Rigth Shift :  num >>=1
+    eg: num = 10 -> 1010 >>=1 [ do right shift to 1 digits] 0101 =5
+        num = 19 -> 10011>>=1 [ do right shift to 1 digits] 01001 = 9
+        num = 24 -> 11000>>=1 [ do right shift to 1 digits] 01100 = 12
+        num = 10 -> 1010 >>=1 [ do right shift to 2 digits] 0010 = 2
+        num = 19 -> 10011>>=1 [ do right shift to 2 digits] 00100 = 4
+        num = 24 -> 11000>>=1 [ do right shift to 2 digits] 00110 = 6
+
+
+    Conclusion: for every right shift to k digits num will be half of it k times of it.
