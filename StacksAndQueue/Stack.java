@@ -122,5 +122,71 @@ public class Stack {
         // Return the total difference
         return maxSum - minSum;
     }
+
+    /**
+ * This class provides a method to remove `k` digits from a given number (represented as a string)
+ * to make it the smallest possible number.
+ */
+    // LEETCODE 402. Remove K Digits
+
+    /**
+     * Removes exactly `k` digits from the input number string `num` such that the resulting number is the smallest possible.
+     *
+     * <p><strong>Approach:</strong>
+     * <ul>
+     *   <li>We use a greedy strategy with a monotonic increasing stack (Deque).</li>
+     *   <li>For each digit in the input:
+     *     <ul>
+     *       <li>While `k > 0`, and the last digit in the stack is greater than the current digit,
+     *           we remove the last digit from the stack. This ensures that higher digits are removed early to allow smaller digits to take their place.</li>
+     *       <li>Add the current digit to the stack.</li>
+     *     </ul>
+     *   </li>
+     *   <li>If any digits are still to be removed after the traversal (`k > 0`), remove from the end of the stack.</li>
+     *   <li>Construct the final number by removing any leading zeros.</li>
+     *   <li>If the final result is an empty string, return "0".</li>
+     * </ul>
+     *
+     * <p><strong>Time Complexity:</strong> O(n), where n is the length of the number string.
+     * <br><strong>Space Complexity:</strong> O(n) for the stack.
+     *
+     * @param num The original number string
+     * @param k   The number of digits to remove
+     * @return The smallest number possible after removing `k` digits
+     */
+    public String removeKdigits(String num, int k) {
+        Deque<Character> stack = new ArrayDeque<>();
+        
+        // Traverse through all digits
+        for (char digit : num.toCharArray()) {
+            // Remove digits from the stack while they are larger than the current digit
+            // and we still have digits to remove
+            while (k > 0 && !stack.isEmpty() && stack.peekLast() > digit) {
+                stack.pollLast();
+                k--;
+            }
+            stack.offerLast(digit);
+        }
+
+        // If we still need to remove digits, remove from the end
+        while (k-- > 0 && !stack.isEmpty()) {
+            stack.pollLast();
+        }
+
+        // Build the result string while removing leading zeros
+        StringBuilder result = new StringBuilder();
+        boolean leadingZero = true;
+
+        for (char ch : stack) {
+            if (leadingZero && ch == '0') continue;
+            leadingZero = false;
+            result.append(ch);
+        }
+
+        // Return "0" if all digits are removed or the result is empty
+        return result.length() == 0 ? "0" : result.toString();
+    }
+
+
     
 }
