@@ -3,6 +3,7 @@ import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Deque;
 
+
 public class Stack {
 
     // Function to find the index of the Next Smaller Element to the Left (NSL) for each element
@@ -187,6 +188,66 @@ public class Stack {
         return result.length() == 0 ? "0" : result.toString();
     }
 
+/**
+ * This class provides a solution to the asteroid collision problem.
+ * Asteroids are represented by integers in an array where:
+ * - Positive values move right
+ * - Negative values move left
+ * 
+ * When two asteroids collide:
+ * - The smaller one explodes
+ * - If both are equal, both explode
+ * - Asteroids moving in the same direction never collide
+ */
+
+    /**
+     * Simulates asteroid collisions and returns the state of asteroids that survive.
+     *
+     * @param asteroids An array of integers where positive represents an asteroid moving to the right,
+     *                  and negative represents an asteroid moving to the left.
+     * @return An array of integers representing the remaining asteroids after all collisions.
+     */
+    public int[] asteroidCollision(int[] asteroids) {
+        Stack<Integer> stack = new Stack<>();
+
+        // Iterate through each asteroid
+        for (int a : asteroids) {
+            boolean destroyed = false;
+
+            // Process collisions: only occurs if top of stack is moving right (positive)
+            // and current asteroid is moving left (negative)
+            while (!stack.isEmpty() && stack.peek() > 0 && a < 0) {
+                int sum = a + stack.peek();
+
+                if (sum < 0) {
+                    // Incoming asteroid is stronger (more negative), pop the top and keep checking
+                    stack.pop();
+                } else if (sum == 0) {
+                    // Equal strength -> both destroy each other
+                    stack.pop();
+                    destroyed = true;
+                    break;
+                } else {
+                    // Stack top is stronger -> current asteroid destroyed
+                    destroyed = true;
+                    break;
+                }
+            }
+
+            // If the current asteroid wasn't destroyed, push it onto the stack
+            if (!destroyed) {
+                stack.push(a);
+            }
+        }
+
+        // Convert stack to result array (stack is LIFO, so reverse the order)
+        int[] result = new int[stack.size()];
+        for (int i = result.length - 1; i >= 0; i--) {
+            result[i] = stack.pop();
+        }
+
+        return result;
+    }
 
     
 }
