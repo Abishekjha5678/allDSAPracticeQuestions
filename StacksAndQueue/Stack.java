@@ -2,6 +2,7 @@ package  StacksAndQueue;
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Deque;
+import java.util.Stack;
 
 
 public class Stack {
@@ -247,6 +248,84 @@ public class Stack {
         }
 
         return result;
+    }
+    //42. Trapping Rain Water
+    // Approach 1 Time O(N) and Space O(1)
+
+    /**
+     * Calculates the total water trapped using two-pointer approach.
+     *
+     * @param height An array representing elevation map.
+     * @return Total units of water trapped.
+     */
+    public int trap(int[] height) {
+        int left = 0;
+        int right = height.length - 1;
+        int leftMax = height[left];
+        int rightMax = height[right];
+        int water = 0;
+
+        while (left < right) {
+            if (leftMax < rightMax) {
+                left++;
+                leftMax = Math.max(leftMax, height[left]);
+                water += leftMax - height[left]; // Water trapped at this index
+            } else {
+                right--;
+                rightMax = Math.max(rightMax, height[right]);
+                water += rightMax - height[right]; // Water trapped at this index
+            }
+        }
+
+        return water;
+    }
+
+    // Approach 2 Time O(N) and Space O(N)
+
+    /**
+     * Precomputes the max height to the left of each index.
+     */
+    int[] leftMaxElement(int[] arr, int n) {
+        int[] res = new int[n];
+        res[0] = arr[0];
+        for (int i = 1; i < n; i++) {
+            res[i] = Math.max(res[i - 1], arr[i]);
+        }
+        return res;
+    }
+
+    /**
+     * Precomputes the max height to the right of each index.
+     */
+    int[] rightMaxElement(int[] arr, int n) {
+        int[] res = new int[n];
+        res[n - 1] = arr[n - 1];
+        for (int i = n - 2; i >= 0; i--) {
+            res[i] = Math.max(res[i + 1], arr[i]);
+        }
+        return res;
+    }
+
+    /**
+     * Calculates the total water trapped using precomputed arrays.
+     *
+     * @param height An array representing elevation map.
+     * @return Total units of water trapped.
+     */
+    public int trapRain(int[] height) {
+        int n = height.length;
+        if (n == 0) return 0;
+
+        int[] left = leftMaxElement(height, n);
+        int[] right = rightMaxElement(height, n);
+
+        int ans = 0;
+        for (int i = 0; i < n; i++) {
+            int waterAtI = Math.min(left[i], right[i]) - height[i];
+            if (waterAtI > 0)
+                ans += waterAtI;
+        }
+        return ans;
     }
 
     
