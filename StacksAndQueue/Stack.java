@@ -409,4 +409,68 @@ public class Stack {
     }
     }
     
+    //84. Largest Rectangle in Histogram
+    //Approach 1 Time O(n) & space O(N)
+    /*
+     * Step 1 : find next smaller to left
+     * step 2 : find next greater to right
+     * step 3 : iterate over the array and arr[i]* (nsr[i]-nsl[i]-1)
+     */
+    int[] NSL(int []arr,int n){
+        int []res=new int[n];
+        Arrays.fill(res,-1);
+        Stack<Integer> st=new Stack<>();
+        for(int i=0;i<n;i++){
+            while(!st.isEmpty() && arr[st.peek()]>=arr[i])st.pop();
+            if(!st.isEmpty())res[i]=st.peek();
+            st.push(i);
+        }
+        return res;
+    }
+
+    int[] NSR(int []arr,int n){
+        int []res=new int[n];
+        Arrays.fill(res,n);
+        Stack<Integer> st=new Stack<>();
+        for(int i=n-1;i>=0;i--){
+            while(!st.isEmpty() && arr[st.peek()]>=arr[i])st.pop();
+            if(!st.isEmpty())res[i]=st.peek();
+            st.push(i);
+        }
+        return res;
+    }
+    public int largestRectangleArea(int[] heights) {
+        int n=heights.length;
+        int []nsl=NSL(heights, n);
+        int nsr[]=NSR(heights, n);
+        int res=0;
+        for(int i=0;i<n;i++){
+            res=Math.max(res, heights[i]*(nsr[i]-nsl[i]-1));
+        }
+        return res;
+    }
+
+    // Approach 2
+    /*
+     * step 1: iterate over the array and keek the index of arr in stack
+     * step 2: take one while loop inside it and check if the current element is <
+     * step 3: On finding a smaller height, pop and calculate areas.
+     * Ensure final cleanup by adding one extra iteration with height 0
+     * Note indirectly we're doing the same logic here also NSL and NSR
+     */
+
+     public int largestRectangleArea(int[] heights) {
+        Stack<Integer> st=new Stack<>();
+        int max=0;
+        for(int i=0;i<=heights.length;i++){
+            int currentHeight = i == heights.length ? 0 : heights[i];
+            while(!st.isEmpty() && currentHeight < heights[st.peek()]){
+                int height = heights[st.pop()];
+                int width = st.isEmpty() ? i : i - st.peek() -1;
+                max = Math.max(max, height * width);
+            }
+            st.push(i);
+        }
+    return max;
+    }
 }
