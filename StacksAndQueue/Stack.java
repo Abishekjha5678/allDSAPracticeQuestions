@@ -328,5 +328,42 @@ public class Stack {
         return ans;
     }
 
+    // Leetcode - 239 Sliding window maximum
+        /* Approach: 
+         * step-1: iterate like a fixd size sliding window 
+         * step-2: while iterating keep checking the max element and put in queue
+         * step-3: once window size hit then remove from the front of queue
+         * step-3 Start filling result from window [k-1] onward
+         */
+
+        public int[] maxSlidingWindow(int[] nums, int k) {
+            int n = nums.length;
+            int[] result = new int[n - k + 1];
+            Deque<Integer> deque = new ArrayDeque<>(); // Stores indices
+            int index = 0;
+    
+            for (int j = 0; j < n; j++) {
+                // Remove indices out of current window
+                if (!deque.isEmpty() && deque.peekFirst() <= j - k) {
+                    deque.pollFirst();
+                }
+    
+                // Maintain decreasing order in deque
+                while (!deque.isEmpty() && nums[deque.peekLast()] <= nums[j]) {
+                    deque.pollLast();
+                }
+    
+                // Add current index
+                deque.offerLast(j);
+    
+                // Start filling result from window [k-1] onward
+                if (j >= k - 1) {
+                    result[index++] = nums[deque.peekFirst()];
+                }
+            }
+    
+            return result;
+        }
+
     
 }
