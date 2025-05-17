@@ -365,5 +365,48 @@ public class Stack {
             return result;
         }
 
+        // LeetCode’s 901. Online Stock Span
+        /*
+         * Step 1:
+            Initialize days = 1 (today counts).
+
+        Step 2:
+            While the top of stack has price <= 85, we pop it and add its span to days.
+
+            Why?
+            Because that previous price (and all its span days) were less than today’s price — so all of them count toward today’s span.
+
+        Step 3:
+            After collecting all applicable days, push {price, days} into stack for future reference.
+        Example Trace:
+            Input:  [100, 80, 60, 70, 60, 75, 85]
+            Output: [1,   1,  1,  2,  1,  4,  6]
+
+            next(100) → Stack: [100, 1]
+            next(80)  → Stack: [100, 1], [80, 1]
+            next(60)  → Stack: [100, 1], [80, 1], [60, 1]
+            next(70)  → Stack: [100, 1], [80, 1], [70, 2] ← 70 > 60, so we pop 60 and days += 1
+
+
+         */
+
+    class StockSpanner {
+    Stack<int[]> st;
+
+    public StockSpanner() {
+        st = new Stack<>();
+    }
+
+    public int next(int price) {
+        int days = 1;
+
+        while (!st.isEmpty() && st.peek()[0] <= price) {
+            days += st.pop()[1];
+        }
+
+        st.push(new int[]{price, days});
+        return days;
+    }
+    }
     
 }
