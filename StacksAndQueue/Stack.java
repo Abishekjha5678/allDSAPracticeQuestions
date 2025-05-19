@@ -473,4 +473,74 @@ public class Stack {
         }
     return max;
     }
+
+
+    /*
+     * 85. Maximal Rectangle
+        my approach for the question is 
+        step 1: take one 2d array to calculate the i-1 the index
+        step 2 : for iterate the loop on first row of the matrix and find the max area in histogram 
+        step 3: now iterate the loop from 1 to n-1 and second loop from 0 to m-1 and keep adding the i-1 of j if !=0 else puth the res[i][j] =0
+        step 4: once jth row completed find the max area in histogram and keep repeating
+     */
+    /**
+     * Calculates the maximum area of rectangle in a histogram.
+     * 
+     * This method uses a stack to find the largest rectangle in a histogram
+     * by keeping track of bar indices with increasing height.
+     * 
+     * @param res array representing histogram bar heights
+     * @return maximum area of rectangle in the histogram
+     */
+    int maxAreaInHistogram(int[] res) {
+        int max = 0, n = res.length;
+        Stack<Integer> st = new Stack<>();
+
+        for (int j = 0; j <= n; j++) {
+            int currentHeight = (j == n) ? 0 : res[j]; // Sentinel zero at the end
+
+            while (!st.isEmpty() && currentHeight < res[st.peek()]) {
+                int height = res[st.pop()];
+                int width = st.isEmpty() ? j : j - st.peek() - 1;
+                max = Math.max(max, height * width);
+            }
+            st.push(j);
+        }
+        return max;
+    }
+
+    /**
+     * Computes the area of the largest rectangle containing only 1s in a 2D binary matrix.
+     * 
+     * The idea is to treat each row of the matrix as the base of a histogram.
+     * Heights of the histogram bars are calculated based on the number of consecutive 1s
+     * above the current row in each column.
+     * 
+     * For each row, we calculate the largest area of rectangle using the histogram approach.
+     * 
+     * @param matrix 2D binary matrix with characters '0' or '1'
+     * @return area of the largest rectangle containing only 1s
+     */
+    public int maximalRectangle(char[][] matrix) {
+        if (matrix == null || matrix.length == 0 || matrix[0].length == 0) return 0;
+
+        int n = matrix.length, m = matrix[0].length;
+        int[] res = new int[m]; // Histogram heights
+        int max = 0;
+
+        // Initialize the first row
+        for (int i = 0; i < m; i++) {
+            res[i] = matrix[0][i] - '0';
+        }
+        max = maxAreaInHistogram(res);
+
+        // Iterate row by row
+        for (int i = 1; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                res[j] = (matrix[i][j] != '0') ? res[j] + 1 : 0;
+            }
+            max = Math.max(max, maxAreaInHistogram(res));
+        }
+        return max;
+    }
 }
